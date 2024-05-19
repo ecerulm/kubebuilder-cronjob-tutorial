@@ -18,6 +18,7 @@ package controller
 
 import (
 	"context"
+	"time"
 
 	"k8s.io/apimachinery/pkg/runtime"
 	ctrl "sigs.k8s.io/controller-runtime"
@@ -31,7 +32,16 @@ import (
 type CronJobReconciler struct {
 	client.Client
 	Scheme *runtime.Scheme
+	Clock
 }
+
+type Clock interface {
+	Now() time.Time
+}
+
+type realClock struct{}
+
+func (_ realClock) Now() time.Time { time.Now() }
 
 //+kubebuilder:rbac:groups=batch.tutorial.kubebuilder.io,resources=cronjobs,verbs=get;list;watch;create;update;patch;delete
 //+kubebuilder:rbac:groups=batch.tutorial.kubebuilder.io,resources=cronjobs/status,verbs=get;update;patch
