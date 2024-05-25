@@ -60,6 +60,8 @@ The important files there are :
 The result is in tag `cronjobplus-v1`
 
     git checkout cronjobplus-v1
+    cd cronjob-project
+    make build
 
 # Generate API (Group Version Kind)
 
@@ -103,6 +105,74 @@ The important files are
 * `cmd/main.go`
 * `api/v1/cronjob_types.go`
 * `internal/controller/cronjob_controller.go`
+
+
+The result is tag `cronjobplus-v2`
+
+    git checkout cronjobplus-v2
+    cd cronjob-project
+    make build
+
+
+
+# Implement the CRD and the controller Reconcile
+
+Add code to:
+
+* `api/v1/cronjob_types.go`
+* `internal/controller/cronjob_controller.go`
+
+Then compile:
+
+    cd cronjob-project
+    make build
+
+You can test with
+
+    brew install kind
+    kind create cluster
+    kubectx kind-kind
+    make install # Installs the CRDs in kind
+    make run # Runs the controller locally towards kind
+
+
+# Generate the webhooks
+
+    cd cronjob-project
+    kubebuilder create webhook --group batch --version v1 --kind CronJob --defaulting --programmatic-validation
+
+
+This will modify the following files
+
+```
+M  PROJECT
+M  api/v1/zz_generated.deepcopy.go
+M  cmd/main.go
+M  config/crd/kustomization.yaml
+M  config/default/kustomization.yaml
+M  go.mod
+```
+
+And will add 
+
+```
+A  api/v1/cronjob_webhook.go
+A  api/v1/cronjob_webhook_test.go
+A  api/v1/webhook_suite_test.go
+A  config/certmanager/certificate.yaml
+A  config/certmanager/kustomization.yaml
+A  config/certmanager/kustomizeconfig.yaml
+A  config/crd/patches/cainjection_in_cronjobs.yaml
+A  config/crd/patches/webhook_in_cronjobs.yaml
+A  config/default/manager_webhook_patch.yaml
+A  config/default/webhookcainjection_patch.yaml
+A  config/webhook/kustomization.yaml
+A  config/webhook/kustomizeconfig.yaml
+A  config/webhook/manifests.yaml
+A  config/webhook/service.yaml
+```
+
+
 
 
 
