@@ -1,61 +1,60 @@
 
-This is just the result of following along the [Tutorial 1: Building CronJob][1]
 
-
-
-# kubebuilder-cronjob-tutorial
-
-https://book.kubebuilder.io/cronjob-tutorial/cronjob-tutorial
-
-## Step 1
+# Create scaffold
 
 
 ```
-# create a project directory, and then run the init command.
-mkdir project
-cd project
-# we'll use a domain of tutorial.kubebuilder.io,
-# so all API groups will be <group>.tutorial.kubebuilder.io.
-kubebuilder init --domain tutorial.kubebuilder.io --repo tutorial.kubebuilder.io/project
-
-```
-
-The result is in tag `V1` in this repo
-
-    git checkout V1
-
-
-
-## Step 2: Modify project to add cont
-
-
-## Step 3: Install in kind cluster
-
-
-
-```
-kind get clusters
-kind create cluster
-kubectx kind-kind
-make manifest
-export ENABLE_WEBHOOK=false
-make run
-
-kubectl create -f config/samples/batch_v1_cronjob.yaml
-
-kubectl get cronjob.batch.tutorial.kubebuilder.io -o yaml
-kubectl get job
+mkdir cronjob-project
+cd cronjob-project
+kubebuilder init --domain tutorial.kubebuilder.io --repo tutorial.kubebuilder.io/project --project-name cronjobplus
 ```
 
 
-# Step 4: Publish on docker 
+Note that we pass `--project-name cronjobplus` otherwise the project name will be `cronjob-project` 
+taken from the folder name.
+
+The project name will determine:
+
+* The kubernetes namespace `$projectname-system`
+* The name of the docker image `<someregistry>/$projectname:<tag>`
+* the kubernetes label `app.kubernetes.io/name: $projectname` for resources
+
+This will generate
 
 ```
-IMG=docker.io/ecerulm/kubebuilder-cronjob:latest
+A  .dockerignore
+A  .gitignore
+A  .golangci.yml
+A  Dockerfile
+A  Makefile
+A  PROJECT
+A  README.md
+A  cmd/main.go
+A  config/default/kustomization.yaml
+A  config/default/manager_config_patch.yaml
+A  config/default/manager_metrics_patch.yaml
+A  config/manager/kustomization.yaml
+A  config/manager/manager.yaml
+A  config/prometheus/kustomization.yaml
+A  config/prometheus/monitor.yaml
+A  config/rbac/kustomization.yaml
+A  config/rbac/leader_election_role.yaml
+A  config/rbac/leader_election_role_binding.yaml
+A  config/rbac/metrics_service.yaml
+A  config/rbac/role.yaml
+A  config/rbac/role_binding.yaml
+A  config/rbac/service_account.yaml
+A  go.mod
+A  go.sum
+A  hack/boilerplate.go.txt
+A  test/e2e/e2e_suite_test.go
+A  test/e2e/e2e_test.go
+A  test/utils/utils.go``
 
-make docker-build docker-push IMG=$IMG # This pushes to dockerhub
-make deploy IMG=$IMG
 ```
 
+The important files there are : 
 
-[1]: https://book.kubebuilder.io/cronjob-tutorial/cronjob-tutorial
+* `cmd/main.go`
+
+
