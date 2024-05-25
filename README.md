@@ -202,6 +202,12 @@ The result is tag `cronjobplus-v5`:
 
 Modify the `Makefile` to use `apply --server-side --force-conflicts`  to vaoid 
 
+The result is tag `cronjobplus-v6`:
+
+    git checkout cronjobplus-v6
+    cd cronjob-project
+    make build
+
 
 ```
 brew install kind
