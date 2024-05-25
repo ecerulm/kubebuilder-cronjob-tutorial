@@ -57,4 +57,53 @@ The important files there are :
 
 * `cmd/main.go`
 
+The result is in tag `cronjobplus-v1`
+
+    git checkout cronjobplus-v1
+
+# Generate API (Group Version Kind)
+
+```
+cd cronjob-project
+kubebuilder create api --group batch --version v1 --kind CronJob
+INFO Create Resource [y/n]
+y
+INFO Create Controller [y/n]
+y
+```
+
+This will modify:
+
+```
+ M PROJECT
+ M cmd/main.go
+ M config/default/kustomization.yaml
+ M config/rbac/kustomization.yaml
+```
+
+and will add:
+
+```
+A  api/v1/cronjob_types.go
+A  api/v1/groupversion_info.go
+A  api/v1/zz_generated.deepcopy.go
+A  config/crd/kustomization.yaml
+A  config/crd/kustomizeconfig.yaml
+A  config/rbac/cronjob_editor_role.yaml
+A  config/rbac/cronjob_viewer_role.yaml
+A  config/samples/batch_v1_cronjob.yaml
+A  config/samples/kustomization.yaml
+A  internal/controller/cronjob_controller.go
+A  internal/controller/cronjob_controller_test.go
+A  internal/controller/suite_test.go
+```
+
+The important files are
+
+* `cmd/main.go`
+* `api/v1/cronjob_types.go`
+* `internal/controller/cronjob_controller.go`
+
+
+
 
