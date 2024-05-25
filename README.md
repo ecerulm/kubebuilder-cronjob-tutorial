@@ -135,6 +135,12 @@ You can test with
     make install # Installs the CRDs in kind
     make run # Runs the controller locally towards kind
 
+The result is tag `cronjobplus-v3`
+
+    git checkout cronjobplus-v3
+    cd cronjob-project
+    make build
+
 
 # Generate the webhooks
 
@@ -153,7 +159,7 @@ M  config/default/kustomization.yaml
 M  go.mod
 ```
 
-And will add 
+And will add:
 
 ```
 A  api/v1/cronjob_webhook.go
@@ -172,7 +178,14 @@ A  config/webhook/manifests.yaml
 A  config/webhook/service.yaml
 ```
 
+To test
 
+```
+cd cronjob-project
+make build
+```
+
+# Implement the webhooks
 
 
 
