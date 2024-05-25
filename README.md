@@ -178,15 +178,51 @@ A  config/webhook/manifests.yaml
 A  config/webhook/service.yaml
 ```
 
-To test
+The result is tag `cronjobplus-v4`:
 
-```
-cd cronjob-project
-make build
-```
+    git checkout cronjobplus-v4
+    cd cronjob-project
+    make build
 
 # Implement the webhooks
 
+Modify:
+
+* `api/v1/cronjob_webhook.go`
 
 
+The result is tag `cronjobplus-v5`:
 
+    git checkout cronjobplus-v5
+    cd cronjob-project
+    make build
+
+# Now to test for test in kind
+
+
+Modify the `Makefile` to use `apply --server-side --force-conflicts`  to vaoid 
+
+
+```
+brew install kind
+kind create cluster
+kubectx kind-kind
+kubectl cluster-info
+# We need cert-manager running in Kind to generate the self signed certificates for the webhook
+kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.14.5/cert-manager.yaml
+# We need kubernetes-dashboard to verify that CronJob controller is working, etc
+helm upgrade --install kubernetes-dashboard kubernetes-dashboard/kubernetes-dashboard --create-namespace --namespace kubernetes-dashboard 
+kubectl -n kubernetes-dashboard create serviceaccount admin-user
+kubectl create  clusterrolebinding kubernetes-dashboard-admin --clusterrole cluster-admin --serviceaccount kubernetes-dashboard:admin-user
+kubectl -n kubernetes-dashboard create token admin-user --duration=720h
+kubectl -n kubernetes-dashboard port-forward svc/kubernetes-dashboard-kong-proxy 8443:443
+open https://localhost:8443
+```
+
+Then we install the CRDs and deploy the controller+webhooks:
+
+    make install
+    IMG=ecerulm/cronjobplus:latest
+    make docker-build IMG=$IMG
+    kind load docker-image $IMG --name kind
+    make deploy IMG=$IMG
