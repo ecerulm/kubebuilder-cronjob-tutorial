@@ -216,6 +216,11 @@ Now you need to modify the
 
 to use `cert-manager` self-signed certificates for the webhooks.
 
+The result is tag `cronjobplus-v7`:
+
+    git checkout cronjobplus-v7
+    cd cronjob-project
+    make build
 
 
 ```
