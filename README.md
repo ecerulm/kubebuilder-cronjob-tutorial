@@ -200,13 +200,22 @@ The result is tag `cronjobplus-v5`:
 # Now to test for test in kind
 
 
-Modify the `Makefile` to use `apply --server-side --force-conflicts`  to vaoid 
+Modify the `Makefile` to use `apply --server-side --force-conflicts`  to avoid
+the problem with `last-applied-configuration` being too long
 
 The result is tag `cronjobplus-v6`:
 
     git checkout cronjobplus-v6
     cd cronjob-project
     make build
+
+
+Now you need to modify the 
+
+* `config/default/kustomization.yaml`
+
+to use `cert-manager` self-signed certificates for the webhooks.
+
 
 
 ```
@@ -228,7 +237,14 @@ open https://localhost:8443
 Then we install the CRDs and deploy the controller+webhooks:
 
     make install
-    IMG=ecerulm/cronjobplus:latest
+    IMG=docker.io/ecerulm/cronjobplus:latest
     make docker-build IMG=$IMG
     kind load docker-image $IMG --name kind
     make deploy IMG=$IMG
+
+
+The last step is to apply a `CronJob` resource:
+
+```
+
+```
